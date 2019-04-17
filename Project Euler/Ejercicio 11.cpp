@@ -9,22 +9,22 @@ int main(){
 				int current = m[x][y] * m[x+1][y] * m[x+2][y] * m[x+3][y];
 				if (best<current)
 					best = current;
-            }
-            if(y + 3 < 20){
+			}
+			if(y + 3 < 20){
 				int current = m[x][y] * m[x][y+1] *m[x][y+2] * m[x][y+3];
 				if (best < current)
 					best = current;
-            }
-            if(x + 3 < 20 && y + 3 < 20){
+			}
+			if(x + 3 < 20 && y + 3 < 20){
 				int current = m[x][y] * m[x+1][y+1] * m[x+2][y+2] * m[x+3][y+3];
 				if (best < current)
 					best = current;
-            }
-            if(x + 3 < 20 && y >= 3){
+            		}
+			if(x + 3 < 20 && y >= 3){
 				int current = m[x][y] * m[x+1][y-1] * m[x+2][y-2] * m[x+3][y-3];
 				if (best < current)
 					best = current;
-            }
+			}
 		}
 		cout<<best<<"\n";
         return 0;

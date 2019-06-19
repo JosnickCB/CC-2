@@ -1,10 +1,13 @@
 #include <iostream>
 using namespace std;
+
 template<typename T>
 class nodo{
-    public:
     T data;
     nodo *next;
+	
+    public:
+	
     nodo(){
     	data = NULL;
     	next = NULL;
@@ -16,21 +19,37 @@ class nodo{
 	void print(){
 		cout<<"Dato: "<<data<<" Direccion: "<<this<<" Next: "<<next<<endl;
 	}
+	T getdata(){
+		return data;
+	}
+	nodo<T>* getnext(){
+		return next;
+	}
+	void setnext(nodo<T>* nnodo){
+		next = nnodo;
+	}
+	void setdata(T dato){
+		data = dato;
+	}
 };
 template<typename T>
 class literator;
 
 template<typename T>
 class List{
-    public:
+    
     nodo<T> *head;
+    public:
+    nodo<T>* gethead(){
+    	return head;
+    }
     List(){
     	head = NULL;
     }
     void inserti(T val){
     	nodo<T> *newnode = new nodo<T>(val);
-    	newnode->next=this->head;
-    	this->head=newnode;
+    	newnode->setnext(this->head);
+    	this->head = newnode;
 	}
     void pushback(T val){
     	if(head==NULL){
@@ -39,41 +58,41 @@ class List{
     	}
 	    nodo<T> *newnode = new nodo<T>(val);
 	    nodo<T> *ptr = this->head;
-	    while(ptr->next!=NULL){
-	        ptr=ptr->next;
+	    while(ptr->getnext()!=NULL){
+	        ptr=ptr->getnext();
 	    }
-	    ptr->next=newnode;
+	    ptr->setnext(newnode);
 	}
     void insertAtPos(int pos,T val){
 	    nodo<T> *newnode = new nodo<T>(val);
 	    if(pos==1){
-	        newnode->next=this->head;
-	        this->head=newnode;
+	        newnode->setnext(this->head);
+	        this->head = newnode;
 	        return;
 	    }
 	    pos--;
-	    nodo<T> *ptr=this->head;
+	    nodo<T> *ptr = this->head;
 	    while(ptr!=NULL && --pos){
-	        ptr=ptr->next;
+	        ptr = ptr->getnext();
 	    }
 	    if(ptr==NULL)
 	    	return;
-	    newnode->next=ptr->next;
-	    ptr->next=newnode;
+	    newnode->setnext(ptr->getnext());
+	    ptr->setnext(newnode);
 	}
     void remove(T data){
 	    bool removed = false;
 	    nodo<T> *curr = head;
 	    nodo<T> *prev = head;
-	    for (; curr != NULL && removed == false; curr = curr->next){
-	        if (head->data == data){
+	    for (; curr != NULL && removed == false; curr = curr->getnext()){
+	        if (head->getdata() == data){
 	            nodo<T> *tmp = head;
-	            head = head->next;
+	            head = head->getnext();
 	            delete tmp;
 	            removed = true;
-	        }else if (curr->data == data){
+	        }else if (curr->getdata() == data){
 	            nodo<T> *tmp = curr;
-	            prev->next = curr->next;
+	            prev->setnext(curr->getnext());
 	            delete tmp;
 	            removed = true;
 	        }
@@ -88,13 +107,13 @@ class List{
 	    }
 	    cout<<"|| ";
 	    while(ptr!=NULL){
-	        cout<<ptr->data;
-	        if(ptr->next==NULL){
+	        cout<<ptr->getdata();
+	        if(ptr->getnext()==NULL){
 	        	cout<<" ||";
 	        	break;
 	        }else{
 	        	cout<<" -> ";
-	        	ptr=ptr->next;
+	        	ptr=ptr->getnext();
 	    	}
 	    }
 	    cout<<endl;
@@ -103,54 +122,80 @@ class List{
 	    nodo<T> *ptr = this->head;
 	    nodo<T> *next = NULL;
 	    while(ptr!=NULL){
-	        next=ptr->next;
+	        next=ptr->getnext();
 	        delete(ptr);
 	        ptr=next;
 	    }
 	}
-	//literator<T>* i(this);
+	literator<T>* createiterator(){
+		return new literator<T>(this);
+	}
 };
 
 template<typename T>
 class literator{
 	nodo<T>* array;
-	int index;
+	nodo<T>* phead;
+	int index = 1;
 	public:
 		literator(List<T>* narray){
-			array = narray->head;
-			if(array->next!=NULL)
+			array = narray->gethead();
+			phead = narray->gethead();
+			if(array->getnext()!=NULL)
 				index=1;
 			else
 				index=0;
 		}
+		nodo<T>* getarray(){
+			return array;
+		}
 		bool vacio(){
 			return array->head == NULL;
 		}
-		void prev(List<T>* narray){
+		void prev(){
 			if(index == 1){
 				cout<<"Estas en el primer elemento\n";
 			}else{
-				nodo<T>* aux = narray->head;
-				while(aux->next!=array){
-					aux = aux->next;
-				}
-				array = aux;
+				int aux = 1;
+				nodo<T> *curr = phead;
+			    while(aux<index){
+			    	curr = curr->getnext();
+			    	aux++;
+			    }
+			    array = curr;
 			}
+			index--;
 		}
 		void sig(){
-			if(array->next==NULL){
+			if(array->getnext()==NULL){
 				cout<<"No hay siguiente elemento\n";
 			}else{
-				array = array->next;
+				array = array->getnext();
+				index++;
 			}
 		}
 		void getactual(){
-			cout<<"|- "<<array->data<<" -|\n";
+			cout<<"|- "<<array->getdata()<<" -|\n";
 		}
 		~literator(){
 			array = NULL;
 		}
+		
 };
+template<typename T>
+void operator ++(literator<T> &a){
+	a.sig();
+}
+template<typename T>
+void operator --(literator<T> &a){
+	a.prev();
+}
+template<typename T>
+bool operator ==(const literator<T> &a,const literator<T> &b){
+	cout<<&(a.getarray()->getdata())<<'\n';
+	cout<<&(b.getarray()->getdata())<<'\n';
+	return a.getarray()->getdata() == b.getarray()->getdata();
+}
 int main(){
 	nodo<int> a(7);
 	nodo<int> b(8);
@@ -172,15 +217,25 @@ int main(){
 	f.print();
 	//f.i(f)
 	literator<int> i(&f);
-	i.getactual();
-	i.prev(&f);
-	i.sig();
-	i.getactual();
-	i.sig();
-	i.getactual();
-	i.sig();
-	i.getactual();
-	i.sig();
-	i.sig();
-	i.sig();
+	i.getactual(); // 1
+	--i; //No se puede ir mas atras
+	++i;
+	i.getactual(); // 6
+	++i;
+	i.getactual(); // 9
+	++i;
+	i.getactual(); // 7 
+	++i; //No se puede ir mas adelante
+	i.getactual(); // 7
+	--i;
+	//--i;
+	i.getactual(); // 9
+	//--i;
+	//i.getactual();
+	//####ITERATOR####
+	literator<int>* first = f.createiterator();
+	literator<int>* second = f.createiterator();
+	++first;
+	bool r = (first==second);
+	cout<<"Respuesta "<<r<<'\n';
 }

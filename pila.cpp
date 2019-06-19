@@ -129,6 +129,90 @@ class stack{
 		    cout<<endl;
 		}
 };
+template<typename T>
+class cola{
+	int stock;
+	int count = 0;
+	nodo<T>* ini;
+	public:
+	cola(){
+		stock = 10;
+		ini = NULL;
+	}
+	cola(nodo<T>* nnodo){
+		stock = 10;
+		ini = nnodo;
+	}
+	void setstock(int n){
+		if(count>n){
+			cout<<"No se puede asignar este stock\n";
+		}else{
+			stock = n;
+		}
+	}
+	nodo<T>* getlast(){
+		return ini;
+	}
+	void push(T N){
+		if(count==stock){
+			cout<<"La cola esta llena\n";
+		}else{
+			if(ini==NULL){
+				nodo<T> *newnode = new nodo<T>(N);
+    			newnode->setnext(this->ini);
+    			this->ini = newnode;
+        		count++;
+    		}else{
+		    	nodo<T> *newnode = new nodo<T>(N);
+		    	nodo<T> *ptr = ini;
+		    	while(ptr->getnext()!=NULL){
+		        	ptr=ptr->getnext();
+		    	}
+		    	ptr->setnext(newnode);
+		    	count++;
+			}
+		}
+	}
+	T top(){
+		if(count > 0)
+			return this->getlast()->getdata();
+		else
+			cout<<"La pila esta vacia\n";
+	}
+	T pop(){
+		T mostrar = this->top();
+		if(count < 1){
+			cout<<"La pila esta vacia\n";
+		}else if(count==1){
+			ini = NULL;
+		}else{
+			ini = ini->getnext();
+		}	
+		return mostrar;
+	}
+		bool empty(){
+			return ini == NULL;
+		}
+		void print(){
+	    	nodo<T>* ptr = ini;
+	    	if(ini==NULL){
+	    		cout<<"Pila Vacia \n";
+	    		return;
+	    	}
+	    	cout<<"|# ";
+	    	while(ptr!=NULL){
+	        	cout<<ptr->getdata();
+		        	if(ptr->getnext()==NULL){
+	        		cout<<" #|";
+	        		break;
+	        	}else{
+	        		cout<<" -> ";
+	        		ptr=ptr->getnext();
+	    		}
+	    	}
+	    	cout<<endl;
+		}
+};
 int main(){
 	stack<int> f;
 	//cout<<f.empty()<<'\n';
@@ -156,4 +240,14 @@ int main(){
 	f.print();
 	f.push(9);
 	f.print();
+	// ###### LA COLA
+	cola<int> c;
+	c.push(4);
+	c.setstock(3);
+	c.push(5);
+	c.push(6);
+	c.print();
+	c.push(8);
+	c.pop();
+	c.print();
 }
